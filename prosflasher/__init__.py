@@ -1,3 +1,4 @@
+import time
 
 def adr_to_str(address):
     """
@@ -15,3 +16,16 @@ def bytes_to_str(arr):
         return ''.join('{:02X} '.format(x) for x in arr)
     else:  # actually just a single byte
         return '{:02X}'.format(arr)
+
+
+def send_command(port, cmd):
+    port.read(port.in_waiting)
+    port.write(cmd)
+    port.flush()
+    time.sleep(0.01)
+    return port.read_all()
+
+
+def sr_command(port, cmd, response):
+    r = send_command(port, cmd)
+    return r.find(response), r

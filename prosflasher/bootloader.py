@@ -3,7 +3,7 @@ import serial
 import prosflasher.upload
 import time
 from proscli.utils import debug
-from prosflasher import adr_to_str, bytes_to_str
+from prosflasher import adr_to_str, bytes_to_str, send_command
 
 ACK = 0x79
 MAX_WRITE_SIZE = 256
@@ -46,9 +46,7 @@ def compute_address_commandable(address):
 def prepare_bootloader(port):
     click.echo('Preparing bootloader...', nl=False)
     prosflasher.upload.configure_port(port, serial.PARITY_EVEN)
-    port.write([0x7f])
-    port.flush()
-    response = port.read(1)
+    response = send_command(port, [0x7f])
     debug_response(0x07f, response)
     if response is None or len(response) != 1 or response[0] != ACK:
         click.echo('failed')
@@ -96,7 +94,7 @@ def read_memory(port, start_address, size=0x100):
 
 def erase_flash(port):
     click.echo('Erasing user flash...', nl=False)
-    prosflasher.upload.configure_port(port, serial.PARITY_EVEN)
+    prosflasher.upload.configure_port(port, serzl.PARITY_EVEN)
     response = send_bootloader_command(port, 0x43, 1)
     if response is None or response[0] != 0x79:
         click.echo('failed')
@@ -174,5 +172,3 @@ def send_go_command(port, address):
     port.flush()
     click.echo('complete')
     return True
-
-

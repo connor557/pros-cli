@@ -9,7 +9,7 @@ import prosflasher.ports
 import prosflasher.bootloader
 import proscli.utils
 from proscli.utils import debug
-from prosflasher import bytes_to_str
+from prosflasher import bytes_to_str, sr_command, send_command
 import sys
 
 ACK = 0x79
@@ -140,11 +140,7 @@ def ask_sys_info(port, ctx=proscli.utils.State()):
     configure_port(port, serial.PARITY_NONE)
     debug('SYS INFO BITS: {}  PORT CFG: {}'.format(bytes_to_str(sys_info_bits), repr(port)), ctx)
     for _ in itertools.repeat(None, 10):
-        port.read(port.in_waiting)
-        port.write(sys_info_bits)
-        port.flush()
-        time.sleep(0.1)
-        response = port.read_all()
+        response = send_command(port, sys_info_bits)
         debug('SYS INFO RESPONSE: {}'.format(bytes_to_str(response)), ctx)
         if len(response) > 14:
             response = response[:14]
