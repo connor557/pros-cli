@@ -210,7 +210,7 @@ def reset_cortex(port, ctx=proscli.utils.State()):
     debug('RESET CORTEX. PORT CFG: {}'.format(repr(port)), ctx)
     port.flush()
     port.read(port.in_waiting)
-    port.write([20])
+    port.write([0x20])
     port.flush()
     click.echo('complete')
     time.sleep(0.01)
