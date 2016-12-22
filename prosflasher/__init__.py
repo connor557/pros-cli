@@ -22,7 +22,7 @@ def send_command(port, cmd):
     port.read(port.in_waiting)
     port.write(cmd)
     port.flush()
-    time.sleep(0.01)
+    time.sleep(0.1)
     return port.read_all()
 
 
